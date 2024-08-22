@@ -1,0 +1,47 @@
+:root {
+    --font-primary: 'Helvetica', 'Inter', sans-serif;
+
+    --colour-font-light: rgba(255,255,255,.8);
+
+    --colour-bg: rgb(20,20,20);
+    --colour-border: rgba(0,0,0,.2);
+  
+    /* base values */
+    --text-base-size: 1em;
+    --text-scale-ratio: 1.18;
+  
+    /* text scale */
+    --text-xs: calc(1em / (var(--text-scale-ratio) * var(--text-scale-ratio)));
+    --text-s: calc(1em / var(--text-scale-ratio));
+    --text-m: calc(1em * var(--text-scale-ratio));
+    --text-l: calc(1em * (var(--text-scale-ratio) * var(--text-scale-ratio)));
+    --text-xl: calc(1em * (var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio)));
+    --text-2xl: calc(1em * (var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio)));
+    --text-3xl: calc(1em * (var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio)));
+  
+    /* line height */
+    --body-line-height: 1.4;
+    --heading-line-height: 1.2;
+  
+    /* spacing */
+    --space-unit:  1em;
+    --space-4xs: calc(0.125 * var(--space-unit)); /* 2px */
+    --space-3xs: calc(0.25 * var(--space-unit)); /* 4px */
+    --space-2xs: calc(0.375 * var(--space-unit)); /* 6px */
+    --space-xs: calc(0.5 * var(--space-unit)); /* 8px */
+    --space-s: calc(0.75 * var(--space-unit)); /* 12px */
+    --space-m: calc(1.25 * var(--space-unit)); /* 20px */
+    --space-l: calc(2 * var(--space-unit)); /* 32px */
+    --space-xl: calc(3.25 * var(--space-unit)); /* 52px */
+    --space-2xl: calc(5.25 * var(--space-unit)); /* 84px */
+    --space-3xl: calc(8.5 * var(--space-unit)); /* 136px */
+    --space-4xl:calc(13.75 * var(--space-unit)); /* 220px */
+  
+    /* base multipliers */
+    --line-height-multiplier: 1;
+    --text-vspace-multiplier: 1;
+}
+
+body {
+    background-color: var(--colour-bg);
+}

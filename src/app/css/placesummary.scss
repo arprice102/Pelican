@@ -1,0 +1,17 @@
+.placesummary {
+    padding: var(--space-2xs);
+    border: 1px solid #999;
+    border-radius: 10px;
+
+    &__place {
+        font-size: var(--text-xl);
+        font-weight: bold;
+        text-align: center;
+        margin-top: var(--space-xs);
+    }
+
+    &__tiles {
+        display: flex;
+        overflow: scroll;
+    }
+}
