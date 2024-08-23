@@ -13,23 +13,11 @@ export default function WeatherApp() {
   console.log("rerender app");
 
   // Ensures we only interact with localstorage client-side 
-  /*
   useEffect(() => {
     //localStorage.clear();
-    const fetchedArray = fetchPlacesArrayFromLocalStorage() || [];
-    console.log("fetchedarray", fetchedArray);
-    
-    // Retrieve forecast on inital load (will be slow because of API throttling)
-    if(fetchedArray.length > 0) {
-      fetchedArray.forEach((place) => {
-        retrieveForecast(place, (fc) => {
-          handleAddForecast(place, fc);
-        });
-      });
-    }
+    handleFetchLocalStorage();
   }, []);
-  */
-
+  
   function handleAddPlace(place) {
     dispatch({
       type: 'addPlace',
@@ -46,6 +34,12 @@ export default function WeatherApp() {
     });
   }
 
+  function handleFetchLocalStorage() {
+    dispatch({
+      type: 'fetchLocalStorage'
+    });
+  }
+
   let summary = "Nowhere has been added yet!";
 
   if(places.length > 0) {
@@ -53,6 +47,12 @@ export default function WeatherApp() {
     summary = [];
 
     places.forEach(place => {
+      if(!place.forecast) {
+        retrieveForecast(place, (fc) => {
+          handleAddForecast(place, fc);
+        });
+      }
+
       console.log("print place", place, "forecast", place.forecast);
       summary.push(<PlaceSummary key={uuidv4()} place={place} forecast={place.forecast} />);
     });
@@ -62,8 +62,6 @@ export default function WeatherApp() {
     <main className={styles.main}>
       <SearchBox onChange={(place) => {
         handleAddPlace(place);
-        //const updatedArray = fetchUpdatedArray(places, place);
-        //updatePlacesArrayInLocalStorage(updatedArray);
         retrieveForecast(place, (fc) => {
           handleAddForecast(place, fc);
         });
@@ -99,7 +97,7 @@ async function retrieveForecast(place, cb) {
 
   // Returns 0 if the most recent API request is less old than the length of ApiTimeout
   const timeout = Math.max(0, (lastRequest + apiTimeout) - time());
-    console.log("timeout", timeout, "lastrequest", lastRequest, "apiTimeout", apiTimeout, "time", time());
+    //console.log("timeout", timeout, "lastrequest", lastRequest, "apiTimeout", apiTimeout, "time", time());
     lastRequest = time() + timeout;
 
   window.setTimeout(() => {
@@ -116,57 +114,43 @@ async function retrieveForecast(place, cb) {
     }
   }, timeout);
 }
-  
-function doesPlaceExistInArray(placesArray, place) {
-  let placeExistsFlag = false;
 
-  placesArray.forEach(storedPlace => {
-    if(storedPlace === place) {
-      placeExistsFlag = true;
-    }
-  });
-
-  return placeExistsFlag;
+function fetchPlacesInLocalStorage() {
+  return JSON.parse(localStorage.getItem('places'));
 }
 
-function fetchUpdatedArray(placesArray, place) {
-  let updatedArray = placesArray;
-
-  if(doesPlaceExistInArray(placesArray, place) === false) {
-    updatedArray = [...placesArray, place]
-  }
-
-  console.log('fetch updated array', updatedArray);
-
-  return updatedArray
-}
-
-function fetchPlacesArrayFromLocalStorage() {
-  return JSON.parse(localStorage.getItem('placesArray'));
-}
-
-function updatePlacesArrayInLocalStorage(updatedArray) {
-  localStorage.setItem('placesArray', JSON.stringify(updatedArray));
+function updatePlacesInLocalStorage(updatedPlaces) {
+  localStorage.setItem('places', JSON.stringify(updatedPlaces));
+  console.log("updated local storage", fetchPlacesInLocalStorage());
 }
 
 function placesReducer(places, action) {
   switch(action.type) {
     case 'addPlace': {
-      return [
+      const updatedPlaces = [
         ...places,
         action.place
       ];
+
+      updatePlacesInLocalStorage(updatedPlaces);
+
+      return updatedPlaces;
     }
     case 'addForecast': {
       let newPlaces = structuredClone(places);
+      console.log("begin add forecast to places ", places);
 
       newPlaces.forEach(place => {
         if(place.place_id === action.place.place_id) {
+          console.log("add forecast to ", place);
           place.forecast = action.forecast;
         }
       });
 
       return newPlaces;
+    }
+    case 'fetchLocalStorage': {
+      return fetchPlacesInLocalStorage() || [];
     }
   }
 }
