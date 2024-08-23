@@ -26,6 +26,13 @@ export default function WeatherApp() {
     });
   }
 
+  function handleRemovePlace(place) {
+    dispatch({
+      type: 'removePlace',
+      place: place
+    });
+  }
+
   function handleAddForecast(place, fc) {
     dispatch({
       type: 'addForecast',
@@ -54,7 +61,15 @@ export default function WeatherApp() {
       }
 
       console.log("print place", place, "forecast", place.forecast);
-      summary.push(<PlaceSummary key={uuidv4()} place={place} forecast={place.forecast} />);
+      summary.push(
+        <PlaceSummary 
+          key={uuidv4()} 
+          place={place} 
+          forecast={place.forecast} 
+          onClick={() => {
+            handleRemovePlace(place);
+          }} 
+        />);
     });
   }
 
@@ -127,14 +142,23 @@ function updatePlacesInLocalStorage(updatedPlaces) {
 function placesReducer(places, action) {
   switch(action.type) {
     case 'addPlace': {
+      let newPlace = action.place;
+      newPlace.id = action.id;
+
       const updatedPlaces = [
         ...places,
-        action.place
+        newPlace
       ];
 
       updatePlacesInLocalStorage(updatedPlaces);
-
       return updatedPlaces;
+    }
+    case 'removePlace': {
+      let newPlaces = structuredClone(places);
+      let filteredPlaces = newPlaces.filter((place) => place.id !== action.place.id);
+
+      updatePlacesInLocalStorage(filteredPlaces);
+      return filteredPlaces;
     }
     case 'addForecast': {
       let newPlaces = structuredClone(places);

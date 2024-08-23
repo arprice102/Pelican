@@ -2,14 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import styles from '../css/placesummary.scss';
 import WeatherTile from "./WeatherTile.jsx";
 
-export default function PlaceSummary({place, forecast}) {
+export default function PlaceSummary({onClick, place, forecast}) {
     console.log("rerender placesummary");
     console.log("place received", place);
 
     const rawPlaceName = place.address.name;
     const rawCounty = place.address.county;
     const rawState = place.address.state;
-
     const nicePlace = getNicePlace(rawPlaceName, rawCounty, rawState);
 
     let tiles = <></>;
@@ -30,6 +29,7 @@ export default function PlaceSummary({place, forecast}) {
             <div className="placesummary__tiles">
                 {tiles}
             </div>
+            <button onClick={onClick}>Remove place</button>
         </div>
     )
 }
