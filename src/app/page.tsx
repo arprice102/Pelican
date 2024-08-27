@@ -66,7 +66,7 @@ export default function WeatherApp() {
           key={uuidv4()} 
           place={place} 
           forecast={place.forecast} 
-          onClick={() => {
+          onRemovePlace={() => {
             handleRemovePlace(place);
           }} 
         />);
@@ -75,20 +75,22 @@ export default function WeatherApp() {
 
   return (
     <main className={styles.main}>
-      <SearchBox onChange={(place) => {
-        handleAddPlace(place);
-        retrieveForecast(place, (fc) => {
-          handleAddForecast(place, fc);
-        });
-      }} />
 
-      {/*<FrequencyToggleButton*/}
+        <SearchBox onChange={(place) => {
+          handleAddPlace(place);
+          retrieveForecast(place, (fc) => {
+            handleAddForecast(place, fc);
+          });
+        }} />
 
-      <h1>Weather</h1>
+        {/*<FrequencyToggleButton*/}
 
-      <div className="placescontainer">
-        {summary}
-      </div>
+        <h1>Weather</h1>
+
+        <div className="placescontainer">
+          {summary}
+        </div>
+        
     </main>
   );
 }
