@@ -1,81 +1,86 @@
 "use client";
 
-import React, { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import styles from "./page.module.scss";
+import { useAtom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { Providers } from './components/Providers';
 import SearchBox from "./components/SearchBox.jsx";
 import PlaceSummary from "./components/PlaceSummary.jsx";
 
+const placesAtom = atomWithStorage('places', []);
+
 export default function WeatherApp() {
-  const [places, dispatch] = useReducer(placesReducer, []);
+  const [places, setPlaces] = useAtom(placesAtom);
 
   console.log("rerender app");
 
-  // Ensures we only interact with localstorage client-side 
-  useEffect(() => {
-    //localStorage.clear();
-    handleFetchLocalStorage();
-  }, []);
-  
   function handleAddPlace(place) {
-    dispatch({
-      type: 'addPlace',
-      place: place,
-      id: uuidv4()
-    });
+    let newPlaces = structuredClone(places);
+    let newPlace = place;
+    newPlace.id = uuidv4();
+
+    const updatedPlaces = [
+      ...newPlaces,
+      newPlace
+    ];
+
+    setPlaces(updatedPlaces);
   }
 
   function handleRemovePlace(place) {
-    dispatch({
-      type: 'removePlace',
-      place: place
-    });
+    let newPlaces = structuredClone(places);
+    let filteredPlaces = newPlaces.filter((p) => p.id !== place.id);
+
+    setPlaces(filteredPlaces);
   }
 
   function handleAddForecast(place, fc) {
-    dispatch({
-      type: 'addForecast',
-      place: place,
-      forecast: fc
-    });
-  }
+    let newPlaces = structuredClone(places);
+    console.log("begin add forecast to places ", places);
 
-  function handleFetchLocalStorage() {
-    dispatch({
-      type: 'fetchLocalStorage'
+    newPlaces.forEach(p => {
+      if (p.place_id === place.place_id) {
+        console.log("add forecast to ", p);
+        p.forecast = fc;
+      }
     });
+
+    setPlaces(newPlaces);
   }
 
   let summary = "Nowhere has been added yet!";
 
-  if(places.length > 0) {
-    console.log("places to print", places);
-    summary = [];
-
-    places.forEach(place => {
-      if(!place.forecast) {
-        retrieveForecast(place, (fc) => {
-          handleAddForecast(place, fc);
-        });
-      }
-
-      console.log("print place", place, "forecast", place.forecast);
-      summary.push(
-        <PlaceSummary 
-          key={uuidv4()} 
-          place={place} 
-          forecast={place.forecast} 
-          onRemovePlace={() => {
-            handleRemovePlace(place);
-          }} 
-        />);
-    });
+  if(places !== undefined) {
+    if (places.length > 0) {
+      console.log("places to print", places);
+      summary = [];
+  
+      places.forEach(place => {
+        if (!place.forecast) {
+          retrieveForecast(place, (fc) => {
+            handleAddForecast(place, fc);
+          });
+        }
+  
+        console.log("print place", place, "forecast", place.forecast);
+        summary.push(
+          <PlaceSummary
+            key={uuidv4()}
+            place={place}
+            forecast={place.forecast}
+            onRemovePlace={() => {
+              handleRemovePlace(place);
+            }}
+          />);
+      });
+    }
   }
 
   return (
     <main className={styles.main}>
-
+      <Providers>
         <SearchBox onChange={(place) => {
           handleAddPlace(place);
           retrieveForecast(place, (fc) => {
@@ -90,7 +95,7 @@ export default function WeatherApp() {
         <div className="placescontainer">
           {summary}
         </div>
-        
+      </Providers>
     </main>
   );
 }
@@ -114,8 +119,8 @@ async function retrieveForecast(place, cb) {
 
   // Returns 0 if the most recent API request is less old than the length of ApiTimeout
   const timeout = Math.max(0, (lastRequest + apiTimeout) - time());
-    //console.log("timeout", timeout, "lastrequest", lastRequest, "apiTimeout", apiTimeout, "time", time());
-    lastRequest = time() + timeout;
+  //console.log("timeout", timeout, "lastrequest", lastRequest, "apiTimeout", apiTimeout, "time", time());
+  lastRequest = time() + timeout;
 
   window.setTimeout(() => {
     try {
@@ -130,53 +135,4 @@ async function retrieveForecast(place, cb) {
       console.error('Error fetching the weather data:', error);
     }
   }, timeout);
-}
-
-function fetchPlacesInLocalStorage() {
-  return JSON.parse(localStorage.getItem('places'));
-}
-
-function updatePlacesInLocalStorage(updatedPlaces) {
-  localStorage.setItem('places', JSON.stringify(updatedPlaces));
-  console.log("updated local storage", fetchPlacesInLocalStorage());
-}
-
-function placesReducer(places, action) {
-  switch(action.type) {
-    case 'addPlace': {
-      let newPlace = action.place;
-      newPlace.id = action.id;
-
-      const updatedPlaces = [
-        ...places,
-        newPlace
-      ];
-
-      updatePlacesInLocalStorage(updatedPlaces);
-      return updatedPlaces;
-    }
-    case 'removePlace': {
-      let newPlaces = structuredClone(places);
-      let filteredPlaces = newPlaces.filter((place) => place.id !== action.place.id);
-
-      updatePlacesInLocalStorage(filteredPlaces);
-      return filteredPlaces;
-    }
-    case 'addForecast': {
-      let newPlaces = structuredClone(places);
-      console.log("begin add forecast to places ", places);
-
-      newPlaces.forEach(place => {
-        if(place.place_id === action.place.place_id) {
-          console.log("add forecast to ", place);
-          place.forecast = action.forecast;
-        }
-      });
-
-      return newPlaces;
-    }
-    case 'fetchLocalStorage': {
-      return fetchPlacesInLocalStorage() || [];
-    }
-  }
 }
