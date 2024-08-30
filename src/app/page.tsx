@@ -3,16 +3,18 @@
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import styles from "./page.module.scss";
-import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
-import { Providers } from './components/Providers';
+import { atom, useAtom } from 'jotai';
+import { placesAtom } from './state/placesAtom.jsx';
+import { fullForecastViewAtom } from './state/fullForecastViewAtom.jsx';
+import { fullForecastPlaceAtom } from './state/fullForecastPlaceAtom.jsx';
 import SearchBox from "./components/SearchBox.jsx";
 import PlaceSummary from "./components/PlaceSummary.jsx";
-
-const placesAtom = atomWithStorage('places', []);
+import FullForecast from "./components/FullForecast.jsx";
 
 export default function WeatherApp() {
   const [places, setPlaces] = useAtom(placesAtom);
+  const [fullForecastView, setFullForecastView] = useAtom(fullForecastViewAtom);
+  const [fullForecastPlace, setFullForecastPlace] = useAtom(fullForecastPlaceAtom);
 
   console.log("rerender app");
 
@@ -50,20 +52,25 @@ export default function WeatherApp() {
     setPlaces(newPlaces);
   }
 
+  function handleFullForecast(place) {
+    setFullForecastPlace(place);
+    console.log("set fullforecastplace", fullForecastPlace);
+  }
+
   let summary = "Nowhere has been added yet!";
 
-  if(places !== undefined) {
+  if (places !== undefined) {
     if (places.length > 0) {
       console.log("places to print", places);
       summary = [];
-  
+
       places.forEach(place => {
         if (!place.forecast) {
           retrieveForecast(place, (fc) => {
             handleAddForecast(place, fc);
           });
         }
-  
+
         console.log("print place", place, "forecast", place.forecast);
         summary.push(
           <PlaceSummary
@@ -73,6 +80,10 @@ export default function WeatherApp() {
             onRemovePlace={() => {
               handleRemovePlace(place);
             }}
+            onViewForecast={() => {
+              console.log("onFullForecast", place);
+              handleFullForecast(place);
+            }}
           />);
       });
     }
@@ -80,22 +91,22 @@ export default function WeatherApp() {
 
   return (
     <main className={styles.main}>
-      <Providers>
-        <SearchBox onChange={(place) => {
-          handleAddPlace(place);
-          retrieveForecast(place, (fc) => {
-            handleAddForecast(place, fc);
-          });
-        }} />
 
-        {/*<FrequencyToggleButton*/}
+      <SearchBox onChange={(place) => {
+        handleAddPlace(place);
+        retrieveForecast(place, (fc) => {
+          handleAddForecast(place, fc);
+        });
+      }} />
 
-        <h1>Weather</h1>
+      <h1>Weather</h1>
 
-        <div className="placescontainer">
-          {summary}
-        </div>
-      </Providers>
+      <div className="placescontainer">
+        {summary}
+      </div>
+
+      <FullForecast />
+
     </main>
   );
 }
