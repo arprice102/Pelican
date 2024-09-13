@@ -2,8 +2,10 @@
     --font-primary: 'Helvetica', 'Inter', sans-serif;
 
     --colour-font-light: rgba(255,255,255,.8);
+    --colour-font-dark: rgb(20,20,20);
 
     --colour-bg: rgb(20,20,20);
+    --colour-bg-light: rgb(255,255,255);
     --colour-border: rgba(0,0,0,.2);
   
     /* base values */
