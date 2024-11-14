@@ -44,6 +44,18 @@
     --text-vspace-multiplier: 1;
 }
 
+html {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
 body {
-    background-color: var(--colour-bg);
+    background-color: var(--colour-bg-light);
+    width: 390px;
+    height: 844px;
+    padding: var(--space-2xs);
+    overflow-y: auto;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }

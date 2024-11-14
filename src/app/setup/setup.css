@@ -1,0 +1,16 @@
+.setup {
+    display: grid;
+    height: 100%;
+    grid-template-areas: "main"
+                         "progress";
+    grid-template-rows: 1fr 40px;;
+}
+
+.setup__content {
+    grid-area: main;
+    overflow-y: scroll;
+}
+
+.setup__progress-controls {
+    grid-area: progress;
+}
