@@ -1,8 +1,9 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { useTheme } from '@mui/material/styles';
+import { setupCurrentStepAtom } from '../state/setupCurrentStepAtom';
 import MobileStepper from '@mui/material/MobileStepper';
 import Button from '@mui/material/Button';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -10,15 +11,12 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import setupConfig from './config';
 import './setup.css';
 
-// Atom scoped locally to component
-const countAtom = atom(0);
-
 export default function SetupLayout({
     children
 }: {
     children: React.ReactNode
 }) {
-    const [activeStep, setActiveStep] = useAtom(countAtom);
+    const [activeStep, setActiveStep] = useAtom(setupCurrentStepAtom);
     const theme = useTheme();
     const router = useRouter();
 
@@ -51,7 +49,7 @@ export default function SetupLayout({
             </main>
             <nav className="setup__progress-controls">
                 <MobileStepper
-                    variant="progress"
+                    variant="dots"
                     steps={setupConfig.length}
                     position="static"
                     activeStep={activeStep}

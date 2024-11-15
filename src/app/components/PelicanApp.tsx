@@ -1,9 +1,11 @@
-"use client";
-import { useAtom, useAtomValue, getDefaultStore } from 'jotai';
-import { placesAtom } from '../state/placesAtom';
-import Dashboard from './Dashboard';
+"use client"
 
-const store = getDefaultStore();
+import { useEffect } from 'react';
+import { useAtom, useAtomValue, getDefaultStore } from 'jotai';
+import { useRouter } from 'next/navigation';
+import { placesAtom } from '../state/placesAtom';
+import { setupCompleteAtom } from '../state/setupCompleteAtom';
+import Dashboard from './Dashboard';
 
 export interface Place {
   id?: number;
@@ -35,9 +37,18 @@ export interface Place {
 
 export default function PelicanApp() {
   const [places, setPlaces] = useAtom(placesAtom);
+  const [setupComplete, setSetupComplete] = useAtom(setupCompleteAtom);
+  const router = useRouter();
+
+  useEffect(() => {
+    if(!setupComplete) {
+      router.replace('/setup/step1');
+    }
+  }, [setupComplete, router]);
+
 
   return (
-    <div>
+    <div className="pelicanapp">
       <Dashboard places={places} setPlaces={setPlaces} />
     </div>
   );

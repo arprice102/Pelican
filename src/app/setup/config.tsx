@@ -1,4 +1,5 @@
 const setupConfig = [
+    '/setup/intro',
     '/setup/step1',
     '/setup/step2',
     '/setup/step3',
@@ -6,7 +7,6 @@ const setupConfig = [
     '/setup/step5',
     '/setup/step6',
     '/setup/step7',
-    '/setup/step8'
 ];
 
 export default setupConfig;

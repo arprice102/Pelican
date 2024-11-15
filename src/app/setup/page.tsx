@@ -1,7 +1,8 @@
-import WelcomePage1 from "../components/WelcomeWizard/WelcomePage1"
+"use client"
+
+import { useRouter } from "next/navigation";
 
 export default function SetUpPage() {
-    return (
-        <WelcomePage1 />
-    )
+    const router = useRouter();
+    router.replace('/setup/intro');
 }

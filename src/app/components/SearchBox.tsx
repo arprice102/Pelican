@@ -1,16 +1,23 @@
 "use client"
 
 import { atom, useAtom } from 'jotai';
+import { SetStateAction } from 'react';
 import { TextField, Autocomplete } from '@mui/material';
 import retrievePlaceSuggestions from '../library/retrievePlaceSuggestions';
 import throttle from '../library/throttle';
 import { useEffect, useCallback } from 'react';
-import { Place } from '../page';
+import { Place } from './PelicanApp';
 
 const inputAtom = atom<undefined | string>(undefined);
 const suggestionsAtom = atom<[] | Place[]>([]);
 
-export default function SearchBox({ onChange }: { onChange: (value: Place) => void }) {
+export default function SearchBox({ 
+    onChange,
+    setPlace
+}: { 
+    onChange: (value: Place) => void,
+    setPlace: (update: SetStateAction<string>) => void;
+}) {
     const [input, setInput] = useAtom(inputAtom);
     const [suggestions, setsuggestions] = useAtom(suggestionsAtom);
 

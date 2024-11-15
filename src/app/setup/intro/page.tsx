@@ -3,13 +3,13 @@
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { setupCurrentStepAtom } from "@/app/state/setupCurrentStepAtom";
-import WelcomePage7 from "@/app/components/WelcomeWizard/WelcomePage7";
+import WelcomePage1 from "@/app/components/WelcomeWizard/WelcomePage1";
 import getWizardCurrentStep from "@/app/library/getWizardCurrentStep";
 import setupConfig from "../config";
 
-export default function WelcomeWizardStep7Page() {
+export default function WelcomeWizardStep1Page() {
     const [setupCurrentStep, setSetupCurrentStep] = useAtom(setupCurrentStepAtom);
-    const link="/setup/step6";
+    const link="/setup/intro";
 
     useEffect(() => {  
         const currentStep = getWizardCurrentStep(link, setupConfig);
@@ -21,7 +21,7 @@ export default function WelcomeWizardStep7Page() {
 
     return (
         <div>
-            <WelcomePage7 />
+            <WelcomePage1 />
         </div>
     )
 }
