@@ -13,10 +13,8 @@ const suggestionsAtom = atom<[] | Place[]>([]);
 
 export default function SearchBox({ 
     onChange,
-    setPlace
 }: { 
     onChange: (value: Place) => void,
-    setPlace: (update: SetStateAction<string>) => void;
 }) {
     const [input, setInput] = useAtom(inputAtom);
     const [suggestions, setsuggestions] = useAtom(suggestionsAtom);
@@ -49,9 +47,11 @@ export default function SearchBox({
                     setInput(newInputValue);
                 }
             }}
-            onChange={(event, suggestion: Place) => {
+            onChange={(event, suggestion: Place | null) => {
                 if(suggestion) {
                     onChange(suggestion);
+                } else if (suggestion === null) {
+                    // Todo - have a fallback if searchbox returns nothing!
                 }
             }}
 

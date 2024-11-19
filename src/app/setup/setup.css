@@ -7,10 +7,33 @@
 }
 
 .setup__content {
+    display: grid;
     grid-area: main;
     overflow-y: scroll;
+    grid-template-areas: "content"
+                         "tooltip";
+    grid-template-rows: 1fr minmax(150px, auto);
+}
+
+.setup__content-main {
+    grid-area: content;
+}
+
+.setup__content-tooltip {
+    grid-area: tooltip;
+    padding: var(--space-m);
+    border: dashed 1px var(--colour-border);
+
+    *:first-child {
+        margin-top: 0;
+    }
+
+    *:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .setup__progress-controls {
     grid-area: progress;
 }
+

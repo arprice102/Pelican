@@ -1,17 +1,29 @@
 "use client"
 
-import React from 'react';
+import { useEffect } from "react";
+import { useAtom } from "jotai";
+import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisable";
 
 export default function WelcomePage4() {
+    const [nextDisable, setNextDisable] = useAtom(welcomeWizardNextDisableAtom);
+
+    useEffect(() => {
+        // Restore disable flag to false (in case user breaks wizard sequence)
+        setNextDisable(false);
+    })
+
     return (
-        <div>
-            <h1>Step 3 - What is the target temperature you heat your home?</h1>
+        <>
+            <div className="setup__content-main">
+                <h1>Step 3 - What is the target temperature you heat your home?</h1>
 
-            <p>Pelican needs to know the target temperature you heat your home because warmer air can carry more moisture which is important for calculating humidity.</p>
+                {/* TODO temparature input tool */}
+            </div>
 
-            <p>If you choose not to heat your property you will still need to input the average temperature of your home in the winter months. You can usually read the current temperature from your thermostat (non-digital display models will normally perform an audiable click if you turn the dial higher than the present temperature).</p>
-
-            {/* TODO temparature input tool */}
-        </div>
+            <div className="setup__content-tooltip">
+                <h3>Tooltip</h3>
+                <p>Pelican needs to know the target temperature you heat your home because warmer air can carry more moisture which is important for calculating humidity.</p>
+            </div>
+        </>
     )
 }

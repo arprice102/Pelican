@@ -42,7 +42,7 @@ export default function PelicanApp() {
 
   useEffect(() => {
     if(!setupComplete) {
-      router.replace('/setup/step1');
+      router.replace('/setup/intro');
     }
   }, [setupComplete, router]);
 
