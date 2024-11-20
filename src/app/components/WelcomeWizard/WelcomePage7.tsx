@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAtom } from "jotai";
-import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisable";
+import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisableAtom";
 
 export default function WelcomePage7() {
     const [nextDisable, setNextDisable] = useAtom(welcomeWizardNextDisableAtom);

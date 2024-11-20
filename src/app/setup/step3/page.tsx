@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { welcomeWizardStepAtom } from "@/app/state/welcomeWizardStepAtom";
-import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisable";
+import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisableAtom";
 import WelcomePage4 from "@/app/components/WelcomeWizard/WelcomePage4"
 import getWizardCurrentStep from "@/app/library/getWizardCurrentStep";
 import setupConfig from "../config";

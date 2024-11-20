@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAtom } from "jotai";
-import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisable";
+import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisableAtom";
 import RoomDimensions from "../RoomDimensions";
 
 export interface RoomDimensionProps {

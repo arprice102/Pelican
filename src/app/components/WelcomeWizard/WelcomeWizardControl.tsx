@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation'
-import { useAtom } from 'jotai';
-import { welcomeWizardNextDisableAtom } from '@/app/state/welcomeWizardNextDisable';
+import { useAtom, useAtomValue } from 'jotai';
+import { welcomeWizardNextDisableAtom } from '@/app/state/welcomeWizardNextDisableAtom';
 import { welcomeWizardStepAtom } from '@/app/state/welcomeWizardStepAtom';
 import { useTheme } from '@mui/material/styles';
 import MobileStepper from '@mui/material/MobileStepper';
@@ -19,7 +19,7 @@ export default function WelcomeWizardControl({
     rootClass: string
 }) {
     const [activeStep, setActiveStep] = useAtom(welcomeWizardStepAtom);
-    const [nextDisable, setNextDisable] = useAtom(welcomeWizardNextDisableAtom);
+    const nextDisable = useAtomValue(welcomeWizardNextDisableAtom);
     const theme = useTheme();
     const router = useRouter();
 

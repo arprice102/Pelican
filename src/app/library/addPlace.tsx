@@ -1,4 +1,4 @@
-import { Place } from '../page';
+import { Place } from '@/app/components/PelicanApp';
 import { v4 as uuidv4 } from 'uuid';
 
 /* 

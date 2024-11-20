@@ -1,13 +1,15 @@
 "use client"
 
 import React, { useEffect } from 'react';
-import { atom, useAtom } from "jotai";
-import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisable";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { welcomeWizardMemoryAtom } from '@/app/state/welcomeWizardMemoryAtom';
+import { welcomeWizardNextDisableAtom } from "@/app/state/welcomeWizardNextDisableAtom";
 import { placesAtom } from '@/app/state/placesAtom';
 import addPlace from '@/app/library/addPlace';
 import SearchBox from '@/app/components/SearchBox';
 import PlacePreview, { PlacePreviewProps } from '@/app/components/PlacePreview';
 import { Place } from '@/app/components/PelicanApp';
+import { WelcomeWizardMemory } from '@/app/state/welcomeWizardMemoryAtom';
 
 const previewAtom = atom<PlacePreviewProps>({
     place: undefined,
@@ -15,43 +17,70 @@ const previewAtom = atom<PlacePreviewProps>({
 })
 
 export default function WelcomePage2() {
-    const [nextDisable, setNextDisable] = useAtom(welcomeWizardNextDisableAtom);
-    const [places, setPlaces] = useAtom(placesAtom);
+    const setNextDisable = useSetAtom(welcomeWizardNextDisableAtom);
+    const [wizardMemory, setWizardMemory] = useAtom(welcomeWizardMemoryAtom);
+    const places = useAtomValue(placesAtom);
     const [preview, setPreview] = useAtom(previewAtom);
 
     useEffect(() => {
-        // Restore disable flag to false (in case user breaks wizard sequence)
-        setNextDisable(false);
-    })
+        // Default to disable next button if no place stored in wizard memory
+        if(wizardMemory.place) {
+            setNextDisable(false);
+        } else {
+            setNextDisable(true);
+        }
+    }, []);
 
-    function handleSearchSuggestion(suggestion: Place) {
-        let placeMatchFlag = false;
+    // Updates location in wizard memory without mutating original object
+    function updatePlaceInWizardMemory(place: Place) {
+        let newMemory: WelcomeWizardMemory = structuredClone(wizardMemory) as WelcomeWizardMemory;
+        newMemory.place = place;
+        setWizardMemory(newMemory);
+    }
 
-        // Clone preview object to avoid mutation
+    function updatePreviewAtom(place: Place, status: string) {
         let newPreview: PlacePreviewProps = structuredClone(preview) as PlacePreviewProps;
+        
+        if(place) {
+            newPreview.place = place;
+        }
 
+        if(status) {
+            newPreview.status = status;
+        }
+
+        setPreview(newPreview);
+    }
+
+    // Handles onChange event from searchbox
+    function handleSearchSuggestion(suggestion: Place) {
+        let placeExistsInStorageFlag: boolean = false;
+        let newStatus = undefined;
+        let newPlace = undefined;
+
+        // Check if the place has already been added to the app before and update flag
         for (const storedPlace of places) {
-            if (suggestion === storedPlace) {
-                placeMatchFlag = true;
+            if (suggestion.place_id === storedPlace.place_id) {
+                placeExistsInStorageFlag = true;
             }
         }
 
-        // If placed already found in places array change preview contents
-        if (placeMatchFlag) {
-            newPreview.status = "This place has already been added!";
+        // If place already found on app update preview to reflect that
+        if (placeExistsInStorageFlag) {
+            newStatus = "This place has already been added!";
         } else {
-            newPreview.status = "Add this place?";
+            newStatus = "Add this place?";
             setNextDisable(false);
         }
 
         // Either way set preview place to match selected suggestion for display
-        newPreview.place = suggestion;
+        newPlace = suggestion;
 
-        // Update atom to trigger rerender
-        setPreview(newPreview);
+        // Update preview atom to trigger rerender
+        updatePreviewAtom(newPlace, newStatus);
 
-        // Add place to places array once user confirms choice
-        //addPlace(suggestion, places, setPlaces);
+        // Update wizard memory with new place
+        updatePlaceInWizardMemory(newPlace);
     }
 
     return (
